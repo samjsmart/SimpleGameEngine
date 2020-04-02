@@ -101,7 +101,10 @@ Draw* SimpleGameEngine::getDraw() {
 
 void SimpleGameEngine::draw() {
 
-    dTime += 0.03;
+    if (!epochTime)
+        epochTime = std::time(nullptr);
+
+    dTime += 0.03f;
     double dHalfTime = dTime * 0.5f;
 
     mRotationX.matrix[0][0] = 1;
@@ -123,13 +126,9 @@ void SimpleGameEngine::draw() {
         // Translate each point away from the origin
         FVector3D pt1Translated, pt2Translated, pt3Translated, translation = { 0, 0, 3 };
 
-        pt1Translated = triangle.points[0] * mRotationX;
-        pt2Translated = triangle.points[1] * mRotationX;
-        pt3Translated = triangle.points[2] * mRotationX;
-
-        pt1Translated = pt1Translated * mRotationY;
-        pt2Translated = pt2Translated * mRotationY;
-        pt3Translated = pt3Translated * mRotationY;
+        pt1Translated = triangle.points[0] * mRotationX * mRotationY;
+        pt2Translated = triangle.points[1] * mRotationX * mRotationY;
+        pt3Translated = triangle.points[2] * mRotationX * mRotationY;
 
         pt1Translated = pt1Translated + translation;
         pt2Translated = pt2Translated + translation;
@@ -142,5 +141,17 @@ void SimpleGameEngine::draw() {
         pt3 = pRender->project(pt3Translated);
 
         pDraw->drawTriangle(pt1, pt2, pt3, brush);
+    }
+
+    framesRendered += 1;
+
+    // Move this out of render loop
+    if (std::time(nullptr) > epochTime) {
+        char buffer[256];
+        sprintf_s(buffer, 200, "FPS: %i", framesRendered);
+        SetWindowTextA(pDraw->getHwnd(), buffer);
+
+        epochTime      = std::time(nullptr);
+        framesRendered = 0;
     }
 }

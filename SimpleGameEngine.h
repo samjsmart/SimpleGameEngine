@@ -1,4 +1,6 @@
 #pragma once
+#include <ctime>
+#include <iomanip>
 
 #include "Draw.h"
 #include "Render.h"
@@ -12,6 +14,9 @@ private:
     FMatrix3x3 mRotationX;
     FMatrix3x3 mRotationY;
     double     dTime;
+    
+    double     epochTime;
+    int        framesRendered;
     
     static LRESULT CALLBACK wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 

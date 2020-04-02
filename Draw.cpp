@@ -94,6 +94,10 @@ void Draw::clearBrushes() {
     vBrushes.clear();
 }
 
+HWND Draw::getHwnd() {
+    return hWnd;
+}
+
 void Draw::drawLine(FVector2D pt1, FVector2D pt2, ID2D1SolidColorBrush* pBrush, float fStrokeWidth) {
     pRenderTarget->DrawLine(D2D1::Point2F(pt1.X, pt1.Y), D2D1::Point2F(pt2.X, pt2.Y), pBrush, fStrokeWidth);
 }

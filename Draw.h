@@ -29,6 +29,7 @@ private:
 public:
     Draw(HINSTANCE hInstance, WNDPROC wndProc, LPVOID lpParam, int iWidth, int iHeight);
     ID2D1SolidColorBrush* createBrush(int r, int g, int b);
+    HWND getHwnd();
     void drawLine(FVector2D pt1, FVector2D pt2, ID2D1SolidColorBrush* pBrush, float fStrokeWidth = 1.0f);
     void drawTriangle(FVector2D pt1, FVector2D pt2, FVector2D pt3, ID2D1SolidColorBrush* pBrush, float fStrokeWidth = 1.0f);
     void beginPaint();

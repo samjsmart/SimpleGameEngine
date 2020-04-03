@@ -4,15 +4,14 @@
 
 #include "Draw.h"
 #include "Render.h"
+#include "Model.h"
 
 class SimpleGameEngine {
 private:
     HINSTANCE  hInstance;
     Draw*      pDraw;
     Render*    pRender;
-    Mesh       mCube;
-    FMatrix3x3 mRotationX;
-    FMatrix3x3 mRotationY;
+    Model      mCube;
     double     dTime;
     
     double     epochTime;

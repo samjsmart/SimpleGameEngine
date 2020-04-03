@@ -6,7 +6,10 @@ SimpleGameEngine::SimpleGameEngine(HINSTANCE hInstance, int width, int height) :
     pDraw   = new Draw(hInstance, wndProc, this, 1920, 1080);
     pRender = new Render(width, height);
 
-    mCube.triangles = {
+     
+    Mesh mCubeMesh;
+
+    mCubeMesh.triangles = {
         // Front
         {0.0f, 0.0f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 1.0f, 0.0f},
         {0.0f, 0.0f, 0.0f,   1.0f, 1.0f, 0.0f,   1.0f, 0.0f, 0.0f},
@@ -32,7 +35,11 @@ SimpleGameEngine::SimpleGameEngine(HINSTANCE hInstance, int width, int height) :
         {1.0f, 0.0f, 1.0f,   0.0f, 0.0f, 0.0f,   1.0f, 0.0f, 0.0f},
     };
 
-    
+    mCube.setMesh(mCubeMesh);
+
+    FVector3D pos = { 0.0f, 0.0f, 3.0f };
+
+    mCube.setLocation(pos);
 }
 
 LRESULT CALLBACK SimpleGameEngine::wndProc(HWND hWnd, UINT uMessage, WPARAM wParam, LPARAM lParam) {
@@ -102,43 +109,21 @@ Draw* SimpleGameEngine::getDraw() {
 void SimpleGameEngine::draw() {
 
     if (!epochTime)
-        epochTime = std::time(nullptr);
+        epochTime = (double)std::time(nullptr);
 
     dTime += 0.03f;
     double dHalfTime = dTime * 0.5f;
 
-    mRotationX.matrix[0][0] = 1;
-    mRotationX.matrix[1][1] = std::cos(dTime);
-    mRotationX.matrix[1][2] = -std::sin(dTime);
-    mRotationX.matrix[2][1] = std::sin(dTime);
-    mRotationX.matrix[2][2] = std::cos(dTime);
-
-    mRotationY.matrix[0][0] = std::cos(dHalfTime);
-    mRotationY.matrix[0][2] = std::sin(dHalfTime);
-    mRotationY.matrix[1][1] = 1;
-    mRotationY.matrix[2][0] = -std::sin(dHalfTime);
-    mRotationY.matrix[2][2] = std::cos(dHalfTime);
-
     ID2D1SolidColorBrush* brush = pDraw->createBrush(255, 0, 0);
 
-    for (auto triangle : mCube.triangles) {
-        
-        // Translate each point away from the origin
-        FVector3D pt1Translated, pt2Translated, pt3Translated, translation = { 0, 0, 3 };
+    mCube.setRotation((float)dTime, (float)dHalfTime, 0);
 
-        pt1Translated = triangle.points[0] * mRotationX * mRotationY;
-        pt2Translated = triangle.points[1] * mRotationX * mRotationY;
-        pt3Translated = triangle.points[2] * mRotationX * mRotationY;
-
-        pt1Translated = pt1Translated + translation;
-        pt2Translated = pt2Translated + translation;
-        pt3Translated = pt3Translated + translation;
-
+    for (auto triangle : mCube.getTriangles()) {
         FVector2D pt1, pt2, pt3;
 
-        pt1 = pRender->project(pt1Translated);
-        pt2 = pRender->project(pt2Translated);
-        pt3 = pRender->project(pt3Translated);
+        pt1 = pRender->project(triangle.points[0]);
+        pt2 = pRender->project(triangle.points[1]);
+        pt3 = pRender->project(triangle.points[2]);
 
         pDraw->drawTriangle(pt1, pt2, pt3, brush);
     }
@@ -151,7 +136,7 @@ void SimpleGameEngine::draw() {
         sprintf_s(buffer, 200, "FPS: %i", framesRendered);
         SetWindowTextA(pDraw->getHwnd(), buffer);
 
-        epochTime      = std::time(nullptr);
+        epochTime      = (double)std::time(nullptr);
         framesRendered = 0;
     }
 }

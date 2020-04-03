@@ -5,40 +5,36 @@ SimpleGameEngine::SimpleGameEngine(HINSTANCE hInstance, int width, int height) :
 
     pDraw   = new Draw(hInstance, wndProc, this, 1920, 1080);
     pRender = new Render(width, height);
-
-     
-    Mesh mCubeMesh;
-
+    
+    FVector3D pos = { 0.0f, 0.0f, 3.0f };
+    Mesh      mCubeMesh;
     mCubeMesh.triangles = {
         // Front
-        {0.0f, 0.0f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 1.0f, 0.0f},
-        {0.0f, 0.0f, 0.0f,   1.0f, 1.0f, 0.0f,   1.0f, 0.0f, 0.0f},
+        {FVector3D(0.0f, 0.0f, 0.0f),   FVector3D(0.0f, 1.0f, 0.0f),   FVector3D(1.0f, 1.0f, 0.0f)},
+        {FVector3D(0.0f, 0.0f, 0.0f),   FVector3D(1.0f, 1.0f, 0.0f),   FVector3D(1.0f, 0.0f, 0.0f)},
 
         // Back
-        {0.0f, 0.0f, 1.0f,   0.0f, 1.0f, 1.0f,   1.0f, 1.0f, 1.0f},
-        {0.0f, 0.0f, 1.0f,   1.0f, 1.0f, 1.0f,   1.0f, 0.0f, 1.0f},
+        {FVector3D(0.0f, 0.0f, 1.0f),   FVector3D(0.0f, 1.0f, 1.0f),   FVector3D(1.0f, 1.0f, 1.0f)},
+        {FVector3D(0.0f, 0.0f, 1.0f),   FVector3D(1.0f, 1.0f, 1.0f),   FVector3D(1.0f, 0.0f, 1.0f)},
 
         // Left
-        {0.0f, 0.0f, 1.0f,   0.0f, 1.0f, 1.0f,   0.0f, 1.0f, 0.0f},
-        {0.0f, 0.0f, 1.0f,   0.0f, 1.0f, 0.0f,   0.0f, 0.0f, 0.0f},
+        {FVector3D(0.0f, 0.0f, 1.0f),   FVector3D(0.0f, 1.0f, 1.0f),   FVector3D(0.0f, 1.0f, 0.0f)},
+        {FVector3D(0.0f, 0.0f, 1.0f),   FVector3D(0.0f, 1.0f, 0.0f),   FVector3D(0.0f, 0.0f, 0.0f)},
 
         // Right
-        {1.0f, 0.0f, 0.0f,   1.0f, 1.0f, 0.0f,   1.0f, 1.0f, 1.0f},
-        {1.0f, 0.0f, 0.0f,   1.0f, 1.0f, 1.0f,   1.0f, 0.0f, 1.0f},
+        {FVector3D(1.0f, 0.0f, 0.0f),   FVector3D(1.0f, 1.0f, 0.0f),   FVector3D(1.0f, 1.0f, 1.0f)},
+        {FVector3D(1.0f, 0.0f, 0.0f),   FVector3D(1.0f, 1.0f, 1.0f),   FVector3D(1.0f, 0.0f, 1.0f)},
         
         // Top
-        {0.0f, 1.0f, 0.0f,   0.0f, 1.0f, 1.0f,   1.0f, 1.0f, 1.0f},
-        {0.0f, 1.0f, 0.0f,   1.0f, 1.0f, 1.0f,   1.0f, 1.0f, 0.0f},
+        {FVector3D(0.0f, 1.0f, 0.0f),   FVector3D(0.0f, 1.0f, 1.0f),   FVector3D(1.0f, 1.0f, 1.0f)},
+        {FVector3D(0.0f, 1.0f, 0.0f),   FVector3D(1.0f, 1.0f, 1.0f),   FVector3D(1.0f, 1.0f, 0.0f)},
 
         // Bottom
-        {1.0f, 0.0f, 1.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f, 0.0f},
-        {1.0f, 0.0f, 1.0f,   0.0f, 0.0f, 0.0f,   1.0f, 0.0f, 0.0f},
+        {FVector3D(1.0f, 0.0f, 1.0f),   FVector3D(0.0f, 0.0f, 1.0f),   FVector3D(0.0f, 0.0f, 0.0f)},
+        {FVector3D(1.0f, 0.0f, 1.0f),   FVector3D(0.0f, 0.0f, 0.0f),   FVector3D(1.0f, 0.0f, 0.0f)},
     };
 
     mCube.setMesh(mCubeMesh);
-
-    FVector3D pos = { 0.0f, 0.0f, 3.0f };
-
     mCube.setLocation(pos);
 }
 
@@ -116,7 +112,9 @@ void SimpleGameEngine::draw() {
 
     ID2D1SolidColorBrush* brush = pDraw->createBrush(255, 0, 0);
 
-    mCube.setRotation((float)dTime, (float)dHalfTime, 0);
+    FRotator rRotation((float)dTime, (float)dHalfTime, 0);
+
+    mCube.setRotation(rRotation);
 
     for (auto triangle : mCube.getTriangles()) {
         FVector2D pt1, pt2, pt3;

@@ -1,15 +1,17 @@
 #pragma once
+#include <vector>
+
 #include "Render.h"
 
 class Model {
 private:
-    Mesh mesh;
-    float fPitch, fYaw, fRoll;
+    Mesh      mesh;
     FVector3D vLocation;
+    FRotator  rRotation;
 
 public:
     std::vector<Triangle> getTriangles();
     void setMesh(Mesh mesh);
     void setLocation(FVector3D position);
-    void setRotation(float fPitch, float fYaw, float fRoll);
+    void setRotation(FRotator rotation);
 };

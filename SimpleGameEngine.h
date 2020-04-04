@@ -2,14 +2,12 @@
 #include <ctime>
 #include <iomanip>
 
-#include "Draw.h"
 #include "Render.h"
 #include "Model.h"
 
 class SimpleGameEngine {
 private:
     HINSTANCE  hInstance;
-    Draw*      pDraw;
     Render*    pRender;
     Model      mCube;
     double     dTime;
@@ -21,7 +19,7 @@ private:
 
 public:
     SimpleGameEngine(HINSTANCE hInstance, int width, int height);
-    Draw* getDraw();
+    Render* getRender();
     int runWindowsMessageLoop();
-    void draw();
+    void update();
 };

@@ -1,11 +1,13 @@
 #include "Render.h"
 
-Render::Render(int width, int height) {
-    this->iWidth  = width;
-    this->iHeight = height;
+Render::Render(HINSTANCE hInstance, WNDPROC wndProc, LPVOID lpParam, int iWidth, int iHeight) {
+
+    pDraw = new Draw(hInstance, wndProc, lpParam, iWidth, iHeight);
+
+    this->iWidth  = iWidth;
+    this->iHeight = iHeight;
     
-    fAspectRatio = (float)height / (float)width;
-    fFar         = 1000.0f;
+    fAspectRatio = (float)iHeight / (float)iWidth;
     fNear        = 0.1f;
     fFov         = 90.0f;
     fFovRad      = 1.0f / std::tanf(fFov * 0.5f / 180.0f * 3.14159f);
@@ -16,6 +18,14 @@ Render::Render(int width, int height) {
     mProj.matrix[3][2] = (-fFar * fNear) / (fFar - fNear);
     mProj.matrix[2][3] = 1.0f;
     mProj.matrix[3][3] = 0.0f;
+}
+
+void Render::start() {
+    pDraw->beginPaint();
+}
+
+void Render::finish() {
+    pDraw->endPaint();
 }
 
 FVector2D Render::project(FVector3D point) {
@@ -45,4 +55,20 @@ FVector2D Render::project(FVector3D point) {
     ret.Y = projectedPoint.Y;
 
     return ret;
+}
+
+void Render::renderModel(Model model, bool bRenderMesh) {
+    ID2D1SolidColorBrush* brush1 = pDraw->createBrush(255, 0, 0);
+    ID2D1SolidColorBrush* brush2 = pDraw->createBrush(255, 255, 0);
+
+    for (auto triangle : model.getTriangles()) {
+        FVector2D pt1, pt2, pt3;
+
+        pt1 = project(triangle.points[0]);
+        pt2 = project(triangle.points[1]);
+        pt3 = project(triangle.points[2]);
+
+        pDraw->drawFilledTriangle(pt1, pt2, pt3, brush1);
+        pDraw->drawTriangle(pt1, pt2, pt3, brush2);
+    }
 }

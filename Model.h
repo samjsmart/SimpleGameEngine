@@ -1,7 +1,14 @@
 #pragma once
 #include <vector>
+#include "Math.h"
 
-#include "Render.h"
+struct Triangle {
+    FVector3D points[3];
+};
+
+struct Mesh {
+    std::vector<Triangle> triangles;
+};
 
 class Model {
 private:

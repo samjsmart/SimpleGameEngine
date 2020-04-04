@@ -3,8 +3,7 @@
 SimpleGameEngine::SimpleGameEngine(HINSTANCE hInstance, int width, int height) : hInstance(NULL) {
     this->hInstance = hInstance;
 
-    pDraw   = new Draw(hInstance, wndProc, this, 1920, 1080);
-    pRender = new Render(width, height);
+    pRender = new Render(hInstance, wndProc, this, 1920, 1080);
     
     FVector3D pos = { 0.0f, 0.0f, 3.0f };
     Mesh      mCubeMesh;
@@ -58,12 +57,12 @@ LRESULT CALLBACK SimpleGameEngine::wndProc(HWND hWnd, UINT uMessage, WPARAM wPar
         if (pSimpleGameEngine) {
             switch (uMessage) {
                 case WM_PAINT: {
-                    Draw* pDraw = pSimpleGameEngine->getDraw();
+                    Render* pRender = pSimpleGameEngine->getRender();
 
-                    if (pDraw) {
-                        pDraw->beginPaint();
-                        pSimpleGameEngine->draw();
-                        pDraw->endPaint();
+                    if (pRender) {
+                        pRender->start();
+                        pSimpleGameEngine->update();
+                        pRender->finish();
                     }
 
                     result = 0;
@@ -87,6 +86,10 @@ LRESULT CALLBACK SimpleGameEngine::wndProc(HWND hWnd, UINT uMessage, WPARAM wPar
     return result;
 }
 
+Render* SimpleGameEngine::getRender() {
+    return pRender;
+}
+
 int SimpleGameEngine::runWindowsMessageLoop() {
     MSG msg;
 
@@ -98,33 +101,17 @@ int SimpleGameEngine::runWindowsMessageLoop() {
     return 0;
 }
 
-Draw* SimpleGameEngine::getDraw() {
-    return this->pDraw;
-}
-
-void SimpleGameEngine::draw() {
+void SimpleGameEngine::update() {
 
     if (!epochTime)
         epochTime = (double)std::time(nullptr);
 
     dTime += 0.03f;
     double dHalfTime = dTime * 0.5f;
-
-    ID2D1SolidColorBrush* brush = pDraw->createBrush(255, 0, 0);
-
     FRotator rRotation((float)dTime, (float)dHalfTime, 0);
 
     mCube.setRotation(rRotation);
-
-    for (auto triangle : mCube.getTriangles()) {
-        FVector2D pt1, pt2, pt3;
-
-        pt1 = pRender->project(triangle.points[0]);
-        pt2 = pRender->project(triangle.points[1]);
-        pt3 = pRender->project(triangle.points[2]);
-
-        pDraw->drawTriangle(pt1, pt2, pt3, brush);
-    }
+    pRender->renderModel(mCube);
 
     framesRendered += 1;
 
@@ -132,7 +119,7 @@ void SimpleGameEngine::draw() {
     if (std::time(nullptr) > epochTime) {
         char buffer[256];
         sprintf_s(buffer, 200, "FPS: %i", framesRendered);
-        SetWindowTextA(pDraw->getHwnd(), buffer);
+        //SetWindowTextA(pDraw->getHwnd(), buffer);
 
         epochTime      = (double)std::time(nullptr);
         framesRendered = 0;

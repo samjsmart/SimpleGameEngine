@@ -8,29 +8,30 @@ SimpleGameEngine::SimpleGameEngine(HINSTANCE hInstance, int width, int height) :
     FVector3D pos = { 0.0f, 0.0f, 3.0f };
     Mesh      mCubeMesh;
     mCubeMesh.triangles = {
-        // Front
+        // Front - Done
         {FVector3D(0.0f, 0.0f, 0.0f),   FVector3D(0.0f, 1.0f, 0.0f),   FVector3D(1.0f, 1.0f, 0.0f)},
         {FVector3D(0.0f, 0.0f, 0.0f),   FVector3D(1.0f, 1.0f, 0.0f),   FVector3D(1.0f, 0.0f, 0.0f)},
-
-        // Back
-        {FVector3D(0.0f, 0.0f, 1.0f),   FVector3D(0.0f, 1.0f, 1.0f),   FVector3D(1.0f, 1.0f, 1.0f)},
-        {FVector3D(0.0f, 0.0f, 1.0f),   FVector3D(1.0f, 1.0f, 1.0f),   FVector3D(1.0f, 0.0f, 1.0f)},
-
-        // Left
-        {FVector3D(0.0f, 0.0f, 1.0f),   FVector3D(0.0f, 1.0f, 1.0f),   FVector3D(0.0f, 1.0f, 0.0f)},
-        {FVector3D(0.0f, 0.0f, 1.0f),   FVector3D(0.0f, 1.0f, 0.0f),   FVector3D(0.0f, 0.0f, 0.0f)},
-
-        // Right
+        
+        // Right - Done
         {FVector3D(1.0f, 0.0f, 0.0f),   FVector3D(1.0f, 1.0f, 0.0f),   FVector3D(1.0f, 1.0f, 1.0f)},
         {FVector3D(1.0f, 0.0f, 0.0f),   FVector3D(1.0f, 1.0f, 1.0f),   FVector3D(1.0f, 0.0f, 1.0f)},
+
+        // Back
+        {FVector3D(1.0f, 0.0f, 1.0f),   FVector3D(1.0f, 1.0f, 1.0f),   FVector3D(0.0f, 1.0f, 1.0f)},
+        {FVector3D(1.0f, 0.0f, 1.0f),   FVector3D(0.0f, 1.0f, 1.0f),   FVector3D(0.0f, 0.0f, 1.0f)},
+
+        // Left - Done
+        {FVector3D(0.0f, 0.0f, 1.0f),   FVector3D(0.0f, 1.0f, 1.0f),   FVector3D(0.0f, 1.0f, 0.0f)},
+        {FVector3D(0.0f, 0.0f, 1.0f),   FVector3D(0.0f, 1.0f, 0.0f),   FVector3D(0.0f, 0.0f, 0.0f)},
         
-        // Top
+        // Top - Done
         {FVector3D(0.0f, 1.0f, 0.0f),   FVector3D(0.0f, 1.0f, 1.0f),   FVector3D(1.0f, 1.0f, 1.0f)},
         {FVector3D(0.0f, 1.0f, 0.0f),   FVector3D(1.0f, 1.0f, 1.0f),   FVector3D(1.0f, 1.0f, 0.0f)},
 
-        // Bottom
+        // Bottom - Done
         {FVector3D(1.0f, 0.0f, 1.0f),   FVector3D(0.0f, 0.0f, 1.0f),   FVector3D(0.0f, 0.0f, 0.0f)},
         {FVector3D(1.0f, 0.0f, 1.0f),   FVector3D(0.0f, 0.0f, 0.0f),   FVector3D(1.0f, 0.0f, 0.0f)},
+
     };
 
     mCube.setMesh(mCubeMesh);
@@ -106,12 +107,12 @@ void SimpleGameEngine::update() {
     if (!epochTime)
         epochTime = (double)std::time(nullptr);
 
-    dTime += 0.03f;
+    dTime += 0.02f;
     double dHalfTime = dTime * 0.5f;
     FRotator rRotation((float)dTime, (float)dHalfTime, 0);
 
     mCube.setRotation(rRotation);
-    pRender->renderModel(mCube);
+    pRender->renderModel(vCamera, mCube);
 
     framesRendered += 1;
 

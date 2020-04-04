@@ -4,6 +4,21 @@
 
 struct Triangle {
     FVector3D points[3];
+
+    FVector3D normal() {
+        FVector3D vLineA = points[1] - points[0];
+        FVector3D vLineB = points[2] - points[0];
+
+        FVector3D vNormal = {
+            vLineA.Y * vLineB.Z - vLineA.Z * vLineB.Y,
+            vLineA.Z * vLineB.X - vLineA.X * vLineB.Z,
+            vLineA.X * vLineB.Y - vLineA.Y * vLineB.X
+        };
+
+        float fLength = sqrtf(vNormal.X * vNormal.X + vNormal.Y * vNormal.Y + vNormal.Z * vNormal.Z);
+
+        return vNormal /= fLength;
+    }
 };
 
 struct Mesh {

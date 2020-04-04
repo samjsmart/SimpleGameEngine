@@ -10,6 +10,10 @@ private:
     HINSTANCE  hInstance;
     Render*    pRender;
     Model      mCube;
+
+    //To be moved to camera object
+    FVector3D  vCamera = { 0,0,0 };
+
     double     dTime;
     
     double     epochTime;

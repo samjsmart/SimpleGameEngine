@@ -116,6 +116,11 @@ struct FVector3D {
     FVector3D(FVector3D const&) = default;
     FVector3D(float x, float y, float z) : X(x), Y(y), Z(z) {}
 
+    float dotProduct(FVector3D rhs) {
+        FVector3D vMultiplied = *this * rhs;
+        return vMultiplied.X + vMultiplied.Y + vMultiplied.Z;
+    }
+
     FVector3D operator+(const FVector3D& rhs) {
         return FVector3D(X + rhs.X, Y + rhs.Y, Z + rhs.Z);
     }
@@ -127,7 +132,48 @@ struct FVector3D {
 
         return *this;
     }
+
+    FVector3D operator-(const FVector3D& rhs) {
+        return FVector3D(X - rhs.X, Y - rhs.Y, Z - rhs.Z);
+    }
+
+    FVector3D& operator-=(const FVector3D& rhs) {
+        X -= rhs.X;
+        Y -= rhs.Y;
+        Z -= rhs.Z;
+
+        return *this;
+    }
     
+    FVector3D operator/(const float& rhs) {
+        return FVector3D(X / rhs, Y / rhs, Z / rhs);
+    }
+
+    FVector3D& operator/=(const float& rhs) {
+        X /= rhs;
+        Y /= rhs;
+        Z /= rhs;
+
+        return *this;
+    }
+
+    FVector3D operator*(const FVector3D& rhs) {
+        return FVector3D(
+            X * rhs.X,
+            Y * rhs.Y,
+            Z * rhs.Z);
+    }
+
+    FVector3D& operator*=(const FVector3D& rhs) {
+        FVector3D newVector = *this * rhs;
+
+        X = newVector.X;
+        Y = newVector.Y;
+        Z = newVector.Z;
+
+        return *this;
+    }
+
     FVector3D operator*(const FMatrix3x3& rhs) {
         float newX = X * rhs.matrix[0][0] + Y * rhs.matrix[1][0] + Z * rhs.matrix[2][0];
         float newY = X * rhs.matrix[0][1] + Y * rhs.matrix[1][1] + Z * rhs.matrix[2][1];

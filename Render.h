@@ -17,7 +17,7 @@ private:
 public:
     Render(HINSTANCE hInstance, WNDPROC wndProc, LPVOID lpParam, int iWidth, int iHeight);
     FVector2D project(FVector3D point);
-    void renderModel(Model model, bool bRenderMesh = false);
+    void renderModel(FVector3D vCamera, Model model, bool bRenderMesh = false);
     void start();
     void finish();
 };

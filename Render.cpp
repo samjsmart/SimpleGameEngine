@@ -57,11 +57,18 @@ FVector2D Render::project(FVector3D point) {
     return ret;
 }
 
-void Render::renderModel(Model model, bool bRenderMesh) {
+void Render::renderModel(FVector3D vCamera, Model model, bool bRenderMesh) {
     ID2D1SolidColorBrush* brush1 = pDraw->createBrush(255, 0, 0);
     ID2D1SolidColorBrush* brush2 = pDraw->createBrush(255, 255, 0);
 
     for (auto triangle : model.getTriangles()) {
+        
+        FVector3D vNormal     = triangle.normal();
+        FVector3D vCameraLine = triangle.points[0] - vCamera;
+        
+        if (vNormal.dotProduct(vCameraLine) > 0.0)
+            continue;
+
         FVector2D pt1, pt2, pt3;
 
         pt1 = project(triangle.points[0]);
@@ -69,6 +76,6 @@ void Render::renderModel(Model model, bool bRenderMesh) {
         pt3 = project(triangle.points[2]);
 
         pDraw->drawFilledTriangle(pt1, pt2, pt3, brush1);
-        pDraw->drawTriangle(pt1, pt2, pt3, brush2);
+        //pDraw->drawTriangle(pt1, pt2, pt3, brush2);
     }
 }

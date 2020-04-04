@@ -5,11 +5,9 @@
 #include <dwrite.h>
 #include <vector>
 
-#include "Math.h"
-
-//Remove when logging class is created
 #include <iostream>
 
+#include "Math.h"
 
 class Draw {
 private:
@@ -26,8 +24,6 @@ private:
     void createD2D();
     void clearBrushes();
     void drawLine(float x1, float y1, float x2, float y2, ID2D1SolidColorBrush* pBrush);
-    void fillFlatTopTriangle(FVector2D pt1, FVector2D pt2, FVector2D pt3, ID2D1SolidColorBrush* pBrush);
-    void fillFlatBottomTriangle(FVector2D pt1, FVector2D pt2, FVector2D pt3, ID2D1SolidColorBrush* pBrush);
     
 public:
     Draw(HINSTANCE hInstance, WNDPROC wndProc, LPVOID lpParam, int iWidth, int iHeight);

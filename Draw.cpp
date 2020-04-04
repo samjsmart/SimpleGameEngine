@@ -56,7 +56,7 @@ void Draw::createD2D() {
     GetClientRect(hWnd, &rect);
 
     pD2DFactory->CreateHwndRenderTarget(
-        D2D1::RenderTargetProperties(),
+        D2D1::RenderTargetProperties(D2D1_RENDER_TARGET_TYPE_DEFAULT, D2D1::PixelFormat(DXGI_FORMAT_UNKNOWN, D2D1_ALPHA_MODE_IGNORE)),
         D2D1::HwndRenderTargetProperties(this->hWnd, D2D1::SizeU(rect.right - rect.left, rect.bottom - rect.top)),
         &pRenderTarget
     );
@@ -110,61 +110,24 @@ void Draw::drawTriangle(FVector2D pt1, FVector2D pt2, FVector2D pt3, ID2D1SolidC
     drawLine(pt3, pt1, pBrush);
 }
 
-void Draw::fillFlatBottomTriangle(FVector2D pt1, FVector2D pt2, FVector2D pt3, ID2D1SolidColorBrush* pBrush) {
-    float fSloap1 = (pt2.X - pt1.X) / (pt2.Y - pt1.Y);
-    float fSloap2 = (pt3.X - pt1.X) / (pt3.Y - pt1.Y);
-
-    float fCurrentX1 = pt1.X;
-    float fCurrentX2 = pt1.X;
-
-    for (int iScanY = pt1.Y; iScanY <= pt2.Y; iScanY++) {
-        drawLine(fCurrentX1, iScanY, fCurrentX2, iScanY, pBrush);
-        fCurrentX1 += fSloap1;
-        fCurrentX2 += fSloap2;
-    }
-}
-
-void Draw::fillFlatTopTriangle(FVector2D pt1, FVector2D pt2, FVector2D pt3, ID2D1SolidColorBrush* pBrush) {
-    float fSloap1 = (pt3.X - pt1.X) / (pt3.Y - pt1.Y);
-    float fSloap2 = (pt3.X - pt2.X) / (pt3.Y - pt2.Y);
-
-    float fCurrentX1 = pt3.X;
-    float fCurrentX2 = pt3.X;
-
-    for (int iScanY = pt3.Y; iScanY > pt1.Y; iScanY--) {
-        drawLine(fCurrentX1, iScanY, fCurrentX2, iScanY, pBrush);
-        fCurrentX1 -= fSloap1;
-        fCurrentX2 -= fSloap2;
-    }
-}
-
 void Draw::drawFilledTriangle(FVector2D pt1, FVector2D pt2, FVector2D pt3, ID2D1SolidColorBrush* pBrush) {
-    // http://www.sunshine2k.de/coding/java/TriangleRasterization/TriangleRasterization.html
+    ID2D1PathGeometry* pGeometry;
+    ID2D1GeometrySink* pSink;
 
-    FVector2D* pPt1 = &pt1;
-    FVector2D* pPt2 = &pt2;
-    FVector2D* pPt3 = &pt3;
+    pD2DFactory->CreatePathGeometry(&pGeometry);
+    pGeometry->Open(&pSink);
 
-    if (pPt1->Y > pPt2->Y)
-        std::swap(pPt1, pPt2);
-    if (pPt2->Y > pPt3->Y)
-        std::swap(pPt2, pPt3);
-    if (pPt1->Y > pPt2->Y)
-        std::swap(pPt1, pPt2);
+    pSink->SetFillMode(D2D1_FILL_MODE_WINDING);
+    pSink->BeginFigure(D2D1::Point2F(pt1.X, pt1.Y), D2D1_FIGURE_BEGIN_FILLED);
+    pSink->AddLine(D2D1::Point2F(pt2.X, pt2.Y));
+    pSink->AddLine(D2D1::Point2F(pt3.X, pt3.Y));
+    pSink->EndFigure(D2D1_FIGURE_END_CLOSED);
 
-    if (pPt2->Y == pPt3->Y) {
-        fillFlatBottomTriangle(*pPt1, *pPt2, *pPt3, pBrush);
-    }
-    else if (pPt1->Y == pPt2->Y) {
-        fillFlatTopTriangle(*pPt1, *pPt2, *pPt3, pBrush);
-    }
-    else {
-        FVector2D pt4 = {
-            pt1.X + ((pPt2->Y - pPt1->Y) / (pPt3->Y - pPt1->Y)) * (pPt3->X - pPt3->X),
-            pPt2->Y
-        };
+    pSink->Close();
+    pSink->Release();
 
-        fillFlatBottomTriangle(*pPt1, *pPt2, pt4, pBrush);
-        fillFlatTopTriangle(*pPt2, pt4, *pPt3, pBrush);
-    }
+    pRenderTarget->DrawGeometry(pGeometry, pBrush);
+    pRenderTarget->FillGeometry(pGeometry, pBrush);
+
+    pGeometry->Release();
 }
